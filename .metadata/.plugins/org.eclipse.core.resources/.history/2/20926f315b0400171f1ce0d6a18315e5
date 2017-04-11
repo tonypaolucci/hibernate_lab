@@ -1,0 +1,150 @@
+package com.wellness.controller;
+
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.wellness.model.UserLogin;
+import com.wellness.model.Wellness;
+import com.wellness.service.SendMail;
+import com.wellness.service.WellnesService;
+import com.wellness.wellnessUtils.WellnessUtils;
+
+
+@Controller
+public class WellnessController {
+	
+		    public WellnessController() {
+				System.out.println("in WellnessController servelet");
+			}
+		    
+		   
+		    SendMail sendMail =new SendMail();
+		    WellnessUtils wellnessUtils=new WellnessUtils();
+	       
+		    @Autowired
+			private WellnesService wellnesService; 
+	    
+	       @RequestMapping(value = {"index", "/"}, method = RequestMethod.GET)
+		    public String index(Model model){ 
+		    model.addAttribute("msg", "Hi welcome to wellness club");
+		    model.addAttribute("m", "Select Units");
+	    	model.addAttribute("wt", "lb/kg");
+	    	model.addAttribute("ht", "ft/cm");
+		    
+		    	return "index";				 
+			}
+	       
+	       @RequestMapping(value = "/logins", method = RequestMethod.GET)
+		    public String logins(Model model) {
+		    	model.addAttribute("logins", new UserLogin());
+		    	model.addAttribute("msg", "Login to explore the complete features!");
+		        return "logins";
+	       }
+	       
+	       @RequestMapping(value ="bmi",  method = RequestMethod.POST)
+	       public String bmi(@RequestParam Map<String,String> requestParams,Model model) throws Exception{
+	       	   String w=requestParams.get("w");
+	       	   String h=requestParams.get("h");
+	       	   String m=requestParams.get("system");    	   
+	       	   Integer wt = Integer.valueOf(w);
+	       	   Integer ht = Integer.valueOf(h);
+	       	
+	       		 if(m.equals("metric")){
+	   		    //metric system SI units
+	   		    	    double bmi = wellnessUtils.getBmi(wt, ht, 10000);
+	   	    		   // model.addAttribute("welcome", "You selected "+m+" Height "+ h+ " cm weight " +w+ " kg" );
+	   			    	model.addAttribute("bmi", "Your BMI is " +bmi);
+	   			    	model.addAttribute("status", "You are " +wellnessUtils.getStatus(bmi));  
+	   			    	model.addAttribute("m", m); 
+	   			    	model.addAttribute("wt", "kg");
+	   			    	model.addAttribute("ht", "cm");
+	   			    	model.addAttribute("w", wt);
+	   			    	model.addAttribute("h", ht);
+	       	     }else {
+	       		 // Imperial system US units
+	   	    		    if(m.equals("imperial")){
+	   	    		    double bmi = wellnessUtils.getBmi(wt, ht, 703);
+	   			    	//model.addAttribute("welcome", "You selected " +m+ " Hight "+ h+ " in weight " +w+ " lb");
+	   			    	model.addAttribute("bmi", "Your BMI is " +bmi);
+	   			    	model.addAttribute("status", " - " +wellnessUtils.getStatus(bmi));
+	   			    	model.addAttribute("m", m); 
+	   			    	model.addAttribute("wt", "lb");
+	   			    	model.addAttribute("ht", "ft");
+	   			    	model.addAttribute("w", wt);
+	   			    	model.addAttribute("h", ht);
+	   	    		    }
+	       		   		 
+	       	 }
+	       	return "index";
+	       }
+	       
+	       
+		    
+		    
+		    @RequestMapping(value = "/about", method = RequestMethod.GET)
+		    public String about(Model model) {
+		    	
+		        return "about";
+		    }
+		    
+		    
+		    @RequestMapping(value = "/contact", method = RequestMethod.GET)
+		    public String contact(Model model) {
+		    	model.addAttribute("sendEmail", new UserLogin());
+		    	model.addAttribute("message", "Wellcome to wellness, please drop us an email"); 
+		    	
+		        return "contact";
+		    }
+		    
+		    
+		    
+		    @RequestMapping(value = "/sendEmail", method = RequestMethod.POST)
+		    public String sendMail(@ModelAttribute("sendEmail") Wellness wellness, BindingResult bindingResult, Model model) { 
+		    	          
+		    	          String validemails = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"; 
+		    	          model.addAttribute("em", wellness.getEmailAddress());
+		       	          model.addAttribute("sb", wellness.getSubject());              
+		                  String message="Subject: " +wellness.getSubject()+"\nMessage: " + wellness.getMsg();
+		          
+		                  if(!wellness.getEmailAddress().matches(validemails)) {
+		                	  model.addAttribute("emailrror", "Invalid email "+ wellness.getEmailAddress()+ " use format johnsmith@scglobal.com ");		                  
+		   	               }
+		                  
+		                  if(wellness.getSubject().isEmpty()) {
+		                	  model.addAttribute("sbjrror", "Please enter Emain Subject");		                   
+		   		           }  
+		                  
+		                  if(wellness.getMsg().length() <= 1 || wellness.getMsg().length() > 300) {
+		                	  model.addAttribute("msgerror", "Must be between 10 and 300 characters");		                   
+		   		           }
+		                  
+		                  else
+				       
+				             try {     
+				            	   sendMail.sendMails(wellness.getEmailAddress() , wellness.getSubject(), message.toString());					          
+				                   model.addAttribute("success", "Thanks Email has been sent to "+ wellness.getEmailAddress());
+				                   model.addAttribute("emailrror", "");  
+				                   model.addAttribute("sbjrror", "");		                   
+				       	           model.addAttribute("msgerror", "");
+				       	           model.addAttribute("em", "");
+				       	           model.addAttribute("sb", "");   
+				       	           
+						        }catch(Exception e) {
+						                 model.addAttribute("sendmailfail", "Error sending email  " );
+						                 e.printStackTrace();
+						        }
+						
+						return "contact";
+				    }
+		
+}
+
+

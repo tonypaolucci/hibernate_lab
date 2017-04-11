@@ -1,0 +1,5 @@
+package com.wellness.model;
+
+public class UserLogin {
+
+}

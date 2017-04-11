@@ -1,0 +1,15 @@
+package test;
+
+public class Answer {   
+    public static String answer(String s) { 
+        String output = "";
+        for(int i = 0 ; i < s.length() ; i++)
+        {
+            if(Character.isUpperCase(s.charAt(i) || s.charAt(i) == '.') || s.charAt(i) == ',') || s.charAt(i) == '.'))
+            {
+            	output += s.charAt(i);
+            }
+        }
+
+    } 
+}

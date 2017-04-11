@@ -1,0 +1,9 @@
+com\wellness\service\SendMail.class
+com\webapp\model\Wellness.class
+com\uniTests\JunitTests.class
+com\wellness\controller\WellnessController.class
+com\webapp\util\DbUtil.class
+com\wellness\service\SendMail$1.class
+com\webapp\repository\WellnessRepository.class
+com\uniTests\Calculations.class
+com\wellness\model\UserLogin.class

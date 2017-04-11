@@ -1,0 +1,147 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+  </head>
+  <body>
+	<header>		
+		<div class="navigation">
+				<div class="container">					
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse.collapse">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>						
+					</div>
+					
+					<div class="navbar-collapse collapse">							
+						<div class="menu">
+							<ul class="nav nav-tabs" role="tablist">
+								<li class="active"><a href="index">Home</a></li>
+								<li><a href="about">About Us</a></li>																
+								<li><a href="contact">Contact Us</a></li>	
+								<li><a href="signups">Sign up</a></li>
+								<li><a href="login">logins</a></li>		
+							</ul>
+						</div>
+					</div>						
+				</div>
+			</div>	
+		
+	</header>
+	<div class="container">	
+	<br>
+		<div class="text-center">
+			<h3 class="text-info">Welcome to Wellness Club 
+			<a href="signups">Sign up  </a>or
+			<a href="logins">Login  </a>
+	        <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#show">Calculate BMI</button>
+			</h3>
+			              <p style="color: #FF0000">${error}</p> <p style="color: #008000">${success}</p>  
+                                  <p style="color: #008000">
+                                  ${welcome}
+                                  </p>
+                                  <p style="color: #008000">    
+                                   ${bmi} ${status}                       
+                           </p>    
+			 
+		</div>
+		<div class="panel-body">
+		
+		  		    
+		</div>
+		<div id="show" class="collapse">
+		<form action="bmi" method="post" style="color: #008000">	                                   
+                     <div class="col-md-3">
+                           <div class="form-group">
+                                    <select required name="system" id="system" class="form-control input-sm"> 	 
+                                                  <option value="metric">Metric</option>
+                                                  <option value="imperial" selected>Imperial</option> 
+                                                  <option value="Select Units" selected>${m}</option>                                             
+                                                 </select>
+                                     <label for="imperial" id="sy">Select System</label><br>
+                              <input type="text"  id="w" name="w" value="${w}" class="form-control input-sm" placeholder="Weight" ><label for="wt" id="wt">${wt}</label>
+                              <input type="text"  id="h" name="h" value="${h}" class="form-control input-sm" placeholder="height" ><label for="ht" id="ht">${ht}</label>						  
+                            <br>
+                           <button type="submit" name="submit" id="submit" class="btn btn-primary" >Get your BMI</button>                           
+                           <a href="index" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> Refresh</a>
+                           
+                           </div>
+                         </div>                       
+                          </form>
+                            </div>
+     </div>
+		
+   
+  </body>
+    
+  	<script>
+ 	 
+$("#submit").on("click",function(){
+		
+        var numeric =/^-{0,1}\d*\.{0,1}\d+$/;
+        var msg ='Enter Numbers only';
+        
+        if ($.trim($("#system").val())=="Select Units") {
+			$("#sy").html('Please Select Units'); 
+			$('#sy').css('color', '#FF0000');	
+	        return false;	       
+	    }
+		
+		if ($.trim($("#w").val())==0 || !($.trim($("#w").val().match(numeric))) ) {
+			$("#wt").html(msg); 
+			$('#wt').css('color', '#FF0000');       
+	        $("#w").focus();
+	        return false;	       
+	    }
+		
+		if ($.trim($("#h").val())==0 || !($.trim($("#h").val().match(numeric)))) {
+			$("#ht").html(msg); 
+			$('#ht').css('color', '#FF0000');	        
+	        $("#h").focus();
+	        return false;	       
+	    }
+		
+		
+		
+	}); 
+	
+ 	 </script>
+ 	 
+ 	 <script>
+$("#system").on("click",function(){
+		
+        
+		if ($.trim($("#system").val())=="imperial" ) {
+			$("#wt").html('lb'); 
+			$("#ht").html('in'); 
+	        return false;	       
+	        }else{
+	     if ($.trim($("#system").val())=="metric" ) {
+			$("#wt").html('kg');
+			$("#ht").html('cm'); 
+	        return false;	       
+	        }
+	      }
+		
+	}); 
+ 	 </script>
+</html>
+
+
+
